@@ -1,0 +1,34 @@
+#!/usr/bin/env python3
+
+import re
+import requests
+
+def download() -> str:
+    r = requests.get('https://tsundoku.site/sw-firebase-auth.js')
+    return r.text
+
+def extract(jstext: str) -> str:
+    envtext = ''
+    for jskey, envkey in [
+        ('apiKey', 'API_KEY'),
+        ('authDomain', 'AUTH_DOMAIN'),
+        ('databaseURL', 'DATABASE_URL'),
+        ('projectId', 'PROJECT_ID'),
+        ('storageBucket', 'STORAGE_BUCKET'),
+        ('messagingSenderId', 'MESSAGING_SENDER_ID'),
+        ('appId', 'APP_ID'),
+    ]:
+        m = re.search(rf'^.*{jskey}: "(.+)".*$', jstext, flags=re.MULTILINE)
+        envtext += f'{envkey}={m.group(1)}\n'
+
+    return envtext
+
+def main():
+    jstext = download()
+    envtext = extract(jstext)
+
+    with open('.env', 'w') as fp:
+        fp.write(envtext)
+
+if __name__ == '__main__':
+    main()
