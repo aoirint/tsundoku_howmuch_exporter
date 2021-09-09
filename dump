@@ -1,0 +1,24 @@
+#!/usr/bin/env python3
+from pathlib import Path
+import requests
+import json
+
+def dump(uid: str):
+    uid = Path(uid).name
+    url = f'https://firestore.googleapis.com/v1/projects/tsundoku-howmuch/databases/(default)/documents/users/{uid}/bookIndex'
+    r = requests.get(url)
+
+    return r.json()
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('uid', type=str)
+    args = parser.parse_args()
+
+    uid = args.uid
+
+    books = dump(uid)
+
+    with open('books.json', 'w') as fp:
+        fp.write(json.dumps(books, ensure_ascii=False))
