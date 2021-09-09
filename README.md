@@ -6,4 +6,8 @@
 ./dump {uid}
 
 cat books.json
+
+./list_asin books.json
+
+cat books.csv
 ```
