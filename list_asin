@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+
+import json
+import csv
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('file', type=str)
+    args = parser.parse_args()
+
+    file = args.file
+
+    with open(file, 'r') as fp:
+        books = json.load(fp)
+
+    books = books['documents'][0]['fields']['data']['mapValue']['fields']
+
+    with open('books.csv', 'w') as fp:
+        writer = csv.writer(fp)
+        writer.writerow(('book_id', 'name', 'author'))
+
+        for key, book in books.items():
+            book_id = book['mapValue']['fields']['bookId']['stringValue']
+            name = book['mapValue']['fields']['title']['stringValue']
+            author = book['mapValue']['fields']['author']['stringValue']
+
+            writer.writerow((book_id, name, author))
